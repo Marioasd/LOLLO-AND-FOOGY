@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Custom Cypher Encoder/Decoder</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    textarea { width: 100%; height: 120px; margin-bottom: 10px; }
+    button { padding: 10px 20px; margin-right: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Custom Cypher Encoder / Decoder</h1>
+
+  <h3>Input</h3>
+  <textarea id="input"></textarea>
+
+  <button onclick="encode()">Encode</button>
+  <button onclick="decode()">Decode</button>
+
+  <h3>Output</h3>
+  <textarea id="output" readonly></textarea>
+
+  <script>
+    const numberMap = {
+      '1': '!', '2': '@', '3': '#', '4': '$', '5': '%',
+      '6': '^', '7': '&', '8': '*', '9': '(', '0': ')'
+    };
+
+    const letterMap = {}; // q->w, w->e, ..., z->a
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+    for (let i = 0; i < alphabet.length; i++) {
+      const from = alphabet[i];
+      const to = alphabet[(i + 1) % alphabet.length];
+      letterMap[from] = to;
+      letterMap[from.toUpperCase()] = to.toUpperCase();
+    }
+
+    function encode() {
+      const text = document.getElementById('input').value;
+      let result = '';
+
+      for (const ch of text) {
+        if (numberMap[ch]) result += numberMap[ch];
+        else if (letterMap[ch]) result += letterMap[ch];
+        else result += ch;
+      }
+
+      document.getElementById('output').value = result;
+    }
+
+    function decode() {
+      const text = document.getElementById('input').value;
+      let result = '';
+
+      const reverseNumbers = Object.fromEntries(
+        Object.entries(numberMap).map(([k, v]) => [v, k])
+      );
+
+      const reverseLetters = Object.fromEntries(
+        Object.entries(letterMap).map(([k, v]) => [v, k])
+      );
+
+      for (const ch of text) {
+        if (reverseNumbers[ch]) result += reverseNumbers[ch];
+        else if (reverseLetters[ch]) result += reverseLetters[ch];
+        else result += ch;
+      }
+
+      document.getElementById('output').value = result;
+    }
+  </script>
+</body>
+</html>
